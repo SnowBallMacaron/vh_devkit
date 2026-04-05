@@ -20,7 +20,7 @@ Runtime assets are still separate:
 
 ## Start The Server
 
-From the `vh_devkit` repo root, first download the runtime assets bundle you were given and place the files so these paths exist:
+From the `vh_devkit` repo root, first download the runtime assets bundle here https://drive.google.com/file/d/1fjKpJ4qvFHMi8A7yqyArDVP-FN9YW6Ys/view?usp=drive_link and place the files so these paths exist:
 
 ```text
 assets/datasets/env_task_set_50_simple_unseen_item.pik
