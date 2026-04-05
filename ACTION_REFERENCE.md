@@ -4,8 +4,6 @@ This file defines the action language exposed by `vh_devkit`.
 
 The server returns concrete action strings through `valid_actions`, and `step` expects one of those strings.
 
-The semantics below are written against the real Unity-backed state used by the devkit.
-
 ## State Model
 
 Use these predicates when reasoning about actions:
@@ -231,13 +229,3 @@ The current action generator suppresses these placements:
 
 These filters apply during candidate generation for `putin` and `putback`.
 
-## Practical Rule
-
-For tool development, the safest control loop is:
-
-1. call `observe` or `valid_actions`
-2. pick one returned action string exactly
-3. call `step` with that exact string
-4. inspect the new observation and repeat
-
-Do not synthesize actions by hand when `valid_actions` is available; use the returned action strings directly.
