@@ -18,6 +18,26 @@ Runtime assets are still separate:
 - a dataset `.pik` file
 - a Unity executable build
 
+## Python Setup
+
+This devkit was tested with Python `3.12` and the package versions pinned in [`requirements.txt`](./requirements.txt).
+
+If you use `uv`:
+
+```bash
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+If you use standard `venv` + `pip`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
 ## Start The Server
 
 From the `vh_devkit` repo root, first download the runtime assets bundle here https://drive.google.com/file/d/1fjKpJ4qvFHMi8A7yqyArDVP-FN9YW6Ys/view?usp=drive_link and place the files so these paths exist:
