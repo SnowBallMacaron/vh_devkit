@@ -9,6 +9,7 @@ It exposes a persistent JSONL stdin/stdout server with a very small command surf
 - `valid_actions`
 - `step`
 - `capture_image`
+- `capture_images`
 - `close`
 
 ## What It Assumes
@@ -122,6 +123,14 @@ Use an exact action string returned by `valid_actions`:
 {"cmd":"capture_image","output_path":"tmp/task0.png","camera_id":2}
 ```
 
+### Save Multiple Current-Frame Images
+
+Save the current frame for each requested camera id.
+
+```json
+{"cmd":"capture_images","output_dir":"tmp/task0_views","camera_ids":[0,2,3]}
+```
+
 ### Close The Server
 
 ```json
@@ -140,3 +149,28 @@ python example_client.py
 - `valid_actions` returns the same string format used by the existing planners.
 - `step` reports both `was_valid_action` and Unity-side `failed_exec`.
 - If `python server.py` fails at startup, the first thing to check is that the downloaded assets are in the exact `assets/datasets/` and `assets/unity/` locations above.
+  echo 'Package: libnvidia-* nvidia-* linux-modules-nvidia-* linux-objects-nvidia-* linux-signatures-nvidia-* xserver-xorg-video-nvidia*' | sudo tee /etc/apt/preferences.d/ubuntu-nvidia-drivers.pref
+
+  echo 'Pin: origin developer.download.nvidia.com' | sudo tee -a /etc/apt/preferences.d/ubuntu-nvidia-drivers.pref
+
+  echo 'Pin-Priority: -1' | sudo tee -a /etc/apt/preferences.d/ubuntu-nvidia-drivers.pref
+
+
+python -m mcts.virtualhome.object_id_agent \
+--model Qwen3.5-9B-VL-local \
+--model_config models.yaml \
+--log_dir virtualhome_objid \
+--mode simple \
+--image_width 512 \
+--image_height 512 \
+--camera_id 2 \
+--num_views 6 \
+--device cuda:0 \
+--base_port 8085 \
+--unity_port_id 4 \
+--max_new_tokens 2048 \
+--top_k 10 \
+--presence_json_mode \
+--debug
+
+xvfb-run -a --server-args='-screen 0 1280x1024x24' python -m mcts.virtualhome.object_id_agent --model Qwen3.5-9B-VL-local --model_config models.yaml --log_dir virtualhome_objid --mode simple --image_width 512 --image_height 512 --camera_id 2 --num_views 6  --device cuda:0 --base_port 8085 --unity_port_id 4 --max_new_tokens 2048 --top_k 10 --presence_json_mode && xvfb-run -a --server-args='-screen 0 1280x1024x24' python -m mcts.virtualhome.step_policy_agent --model Qwen3.5-9B-VL-local --model_config models.yaml --log_dir qwen3.5-9b-vl-local --mode simple --batch_size 1 --device cuda:0 --unity_port_id 2 --image_width 512 --image_height 512 --camera_ids 2 --image_angles 000 --fewshot_examples 0 --strict_action_validation --use_images

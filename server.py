@@ -191,6 +191,37 @@ class VirtualHomeDevServer:
             "mode": image_mode or self.image_mode,
         }
 
+    def capture_images(
+        self,
+        output_dir: str | Path,
+        *,
+        camera_ids: list[int],
+        image_width: int | None = None,
+        image_height: int | None = None,
+        image_mode: str | None = None,
+        filename_prefix: str = "image",
+    ) -> dict[str, Any]:
+        output_root = Path(output_dir)
+        output_root.mkdir(parents=True, exist_ok=True)
+
+        saved_images: list[dict[str, Any]] = []
+        for camera_id in camera_ids:
+            image_path = output_root / f"{filename_prefix}_cam_{camera_id}.png"
+            result = self.capture_image(
+                output_path=image_path,
+                camera_id=camera_id,
+                image_width=image_width,
+                image_height=image_height,
+                image_mode=image_mode,
+            )
+            saved_images.append(result)
+
+        return {
+            "task_index": self.current_task_index,
+            "output_dir": str(output_root),
+            "images": saved_images,
+        }
+
 
 def _reply(payload: dict[str, Any]) -> None:
     def convert(value: Any):
@@ -256,12 +287,13 @@ def main() -> int:
                 "commands": [
                     "reset",
                     "observe",
-                    "valid_actions",
-                    "step",
-                    "capture_image",
-                    "close",
-                ],
-            },
+                "valid_actions",
+                "step",
+                "capture_image",
+                "capture_images",
+                "close",
+            ],
+        },
         }
     )
 
@@ -293,6 +325,16 @@ def main() -> int:
                     image_width=int(request["image_width"]) if "image_width" in request else None,
                     image_height=int(request["image_height"]) if "image_height" in request else None,
                     image_mode=request.get("image_mode"),
+                )
+            elif cmd == "capture_images":
+                camera_ids = request.get("camera_ids", [2])
+                result = server.capture_images(
+                    output_dir=request["output_dir"],
+                    camera_ids=[int(camera_id) for camera_id in camera_ids],
+                    image_width=int(request["image_width"]) if "image_width" in request else None,
+                    image_height=int(request["image_height"]) if "image_height" in request else None,
+                    image_mode=request.get("image_mode"),
+                    filename_prefix=str(request.get("filename_prefix", "image")),
                 )
             elif cmd == "close":
                 server.close()

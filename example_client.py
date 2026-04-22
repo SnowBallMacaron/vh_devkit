@@ -43,6 +43,7 @@ def main() -> int:
     print("RESET", send(proc, {"cmd": "reset", "task_id": 0}))
     print("VALID", send(proc, {"cmd": "valid_actions"}))
     print("OBSERVE", send(proc, {"cmd": "observe"}))
+    print("IMAGES", send(proc, {"cmd": "capture_images", "output_dir": "tmp/task0_views", "camera_ids": [2]}))
     action = send(proc, {"cmd": "valid_actions"})["result"]["valid_actions"][0]
     print("STEP", send(proc, {"cmd": "step", "action": action}))
     print("CLOSE", send(proc, {"cmd": "close"}))
